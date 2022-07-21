@@ -6,49 +6,54 @@
  import java.util.Scanner;
 
 public class a {
-    private int need[][], allocate[][], max[][], avail[][], np, nr;
+    private int rem_need[][], allocate[][], max[][], avail[][], nProcess, nResource;
 
     private void input() {
         Scanner sc = new Scanner(System.in);
+
         System.out.print("Enter no. of processes and resources : ");
-        np = sc.nextInt();
+        nProcess = sc.nextInt();
         // no. of process
-        nr = sc.nextInt();
+        nResource = sc.nextInt();
         // no. of resources
-        need = new int[np][nr];
-        // initializing arrays
-        max = new int[np][nr];
-        allocate = new int[np][nr];
-        avail = new int[1][nr];
+
+        rem_need = new int[nProcess][nResource];
+        max = new int[nProcess][nResource];
+        allocate = new int[nProcess][nResource];
+
+        avail = new int[1][nResource];
+
         System.out.println("Enter allocation matrix -->");
-        for (int i = 0; i < np; i++)
-            for (int j = 0; j < nr; j++)
+        for (int i = 0; i < nProcess; i++)
+            for (int j = 0; j < nResource; j++)
                 allocate[i][j] = sc.nextInt();
         // allocation matrix
+
         System.out.println("Enter max matrix -->");
-        for (int i = 0; i < np; i++)
-            for (int j = 0; j < nr; j++)
+        for (int i = 0; i < nProcess; i++)
+            for (int j = 0; j < nResource; j++)
                 max[i][j] = sc.nextInt();
         // max matrix
+
         System.out.println("Enter available matrix -->");
-        for (int j = 0; j < nr; j++)
+        for (int j = 0; j < nResource; j++)
             avail[0][j] = sc.nextInt();
         // available matrix
         sc.close();
     }
 
     private int[][] calc_need() {
-        for (int i = 0; i < np; i++)
-            for (int j = 0; j < nr; j++)
-                // calculating need matrix
-                need[i][j] = max[i][j] - allocate[i][j];
-        return need;
+        for (int i = 0; i < nProcess; i++)
+            for (int j = 0; j < nResource; j++)
+                // calculating remaining need matrix
+                rem_need[i][j] = max[i][j] - allocate[i][j];
+        return rem_need;
     }
 
     private boolean check(int i) {
         // checking if all resources for ith process can be allocated
-        for (int j = 0; j < nr; j++)
-            if (avail[0][j] < need[i][j])
+        for (int j = 0; j < nResource; j++)
+            if (avail[0][j] < rem_need[i][j])
                 return false;
         return true;
     }
@@ -56,16 +61,16 @@ public class a {
     public void isSafe() {
         input();
         calc_need();
-        boolean done[] = new boolean[np];
+        boolean done[] = new boolean[nProcess];
         int j = 0;
-        while (j < np) {
+        while (j < nProcess) {
             // until all process allocated
             boolean allocated = false;
-            for (int i = 0; i < np; i++)
+            for (int i = 0; i < nProcess; i++)
                 if (!done[i] && check(i)) {
                     // trying to allocate
-                    for (int k = 0; k < nr; k++)
-                        avail[0][k] = avail[0][k] - need[i][k] + max[i][k];
+                    for (int k = 0; k < nResource; k++)
+                        avail[0][k] = avail[0][k] - rem_need[i][k] + max[i][k];
                     System.out.println("Allocated process : " + i);
                     allocated = done[i] = true;
                     j++;
@@ -74,7 +79,7 @@ public class a {
                 break;
             // if no allocation
         }
-        if (j == np)
+        if (j == nProcess)
             // if all processes are allocated
             System.out.println("\nSafely allocated");
         else
@@ -85,6 +90,7 @@ public class a {
         new a().isSafe();
     }
 }
+
 
 /* Output:-
 
