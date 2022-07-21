@@ -6,7 +6,7 @@
  LRU Part 
  */ 
   
- import java.util.Scanner;
+import java.util.Scanner;
 
 class LRU {
     public static int sort(int c[]) {
@@ -23,22 +23,28 @@ class LRU {
 
     public static void main(String args[]) {
         int z, m = 0, hit = 0, faults = 0;
+        
         Scanner sc = new Scanner(System.in);
+        
         System.out.println("Enter the size of the array:- ");
         int n = sc.nextInt();
+        
         int a[] = new int[n];
+        int b[] = new int[3];
+        int c[] = new int[3];
         int flag[] = new int[n];
+        
         System.out.println("Enter the elements:-");
         for (int i = 0; i < n; i++) {
             a[i] = sc.nextInt();
             flag[i] = 0;
         }
-        int b[] = new int[3];
-        int c[] = new int[3];
+        
         for (int i = 0; i < 3; i++) {
             b[i] = -1;
             c[i] = 0;
         }
+        
         for (int i = 0; i < n; i++) {
             z = a[i];
             for (int j = 0; j < 3; j++) {
@@ -48,6 +54,7 @@ class LRU {
                     break;
                 }
             }
+            
             if (flag[i] == 0 && b[2] == -1) {
                 for (int j = 0; j < 3; j++) {
                     if (b[j] == -1) {
@@ -58,6 +65,7 @@ class LRU {
                     }
                 }
             }
+            
             if (flag[i] == 0) {
                 m = sort(c);
                 b[m] = z;
@@ -68,6 +76,7 @@ class LRU {
                 c[m] = 0;
             }
         }
+        
         System.out.println("Number of hits:- " + hit);
         System.out.println("Number of faults:- " + faults);
         System.out.println("Hit ratio:- " + (hit * 100) / (hit + faults));
