@@ -6,91 +6,90 @@
  SJF Part in this file 
  */ 
   
- import java.util.Arrays; 
- import java.util.Scanner; 
-  
- class Process implements Comparable<Process> { 
-     public int processId; 
-     public int burstTime; 
-     public int waitingTime; 
-     public int turnAroundTime; 
-  
-     Process(int processId, int burstTime) { 
-         this.processId = processId; 
-         this.burstTime = burstTime; 
-     } 
-  
-     @Override 
-     public int compareTo(Process p) { 
-         return Integer.compare(this.burstTime, p.burstTime); 
-     } 
- } 
-  
- class SJF { 
-  
-     private static Process[] processes; 
-  
-     public static void main(String[] args) { 
-  
-         Scanner scanner = new Scanner(System.in); 
-         System.out.println("Enter number of Processes"); 
-         int n = scanner.nextInt(); 
-         processes = new Process[n]; 
-         System.out.println("Enter details"); 
-  
-         for (int i = 0; i < n; i++) { 
-             System.out.println("Enter burst time for Process " + (i + 1)); 
-             int burstTime = scanner.nextInt(); 
-             processes[i] = new Process(i + 1, burstTime); 
-         } 
-  
-         Arrays.sort(processes); 
-  
-         int accumulateWaitTime = 0; 
-         for (int i = 0; i < n; i++) { 
-             processes[i].waitingTime = accumulateWaitTime; 
-             processes[i].turnAroundTime = processes[i].burstTime + processes[i].waitingTime; 
-             accumulateWaitTime += processes[i].burstTime; 
-         } 
-  
-         System.out.println("Process Scheduling"); 
-         for (int i = 0; i < n; i++) { 
-             System.out.print(String.format("Id: %s, Burst Time: %s, Waiting Time: %s, Turn Around Time: %s\n", 
-                     processes[i].processId, processes[i].burstTime, processes[i].waitingTime, processes[i].turnAroundTime 
-             )); 
-         } 
-  
-         float averageWaitTime = 0f, averageTurnAroundTime = 0f; 
-         for (int i = 0; i < n; i++) { 
-             averageWaitTime += processes[i].waitingTime; 
-             averageTurnAroundTime += processes[i].turnAroundTime; 
-         } 
-  
-         averageWaitTime /= n; 
-         averageTurnAroundTime /= n; 
-  
-         System.out.println("Average Wait Time: " + averageWaitTime + ", Average Turn Around Time: " + averageTurnAroundTime); 
-     } 
- } 
-  
- /* 
- Output: 
-  
- Enter number of Processes 
- 4 
- Enter details 
- Enter burst time for Process 1 
- 6 
- Enter burst time for Process 2 
- 8 
- Enter burst time for Process 3 
- 7 
- Enter burst time for Process 4 
- 3 
- Process Scheduling 
- Id: 4, Burst Time: 3, Waiting Time: 0, Turn Around Time: 3 
- Id: 1, Burst Time: 6, Waiting Time: 3, Turn Around Time: 9 
- Id: 3, Burst Time: 7, Waiting Time: 9, Turn Around Time: 16 
- Id: 2, Burst Time: 8, Waiting Time: 16, Turn Around Time: 24 
- Average Wait Time: 7.0, Average Turn Around Time: 13.0 
- */ 
+ import java.util.Scanner;
+
+public class a {
+    public static void main(String args[]) {
+        int burst_time[], process[], waiting_time[], tat[], i, j, n, total = 0, pos, temp;
+        float wait_avg, tat_avg;
+        Scanner s = new Scanner(System.in);
+        System.out.print("Enter number of process: ");
+        n = s.nextInt();
+        process = new int[n];
+        burst_time = new int[n];
+        waiting_time = new int[n];
+        tat = new int[n];
+        System.out.println("\nEnter Burst time:");
+        for (i = 0; i < n; i++) {
+            System.out.print("\nProcess[" + (i + 1) + "]: ");
+            burst_time[i] = s.nextInt();
+            process[i] = i + 1; // Process Number
+        }
+        // Sorting
+        for (i = 0; i < n; i++) {
+            pos = i;
+            for (j = i + 1; j < n; j++) {
+                if (burst_time[j] < burst_time[pos])
+                    pos = j;
+            }
+            temp = burst_time[i];
+            burst_time[i] = burst_time[pos];
+            burst_time[pos] = temp;
+
+            temp = process[i];
+            process[i] = process[pos];
+            process[pos] = temp;
+        }
+        // First process has 0 waiting time
+        waiting_time[0] = 0;
+        // calculate waiting time
+        for (i = 1; i < n; i++) {
+            waiting_time[i] = 0;
+            for (j = 0; j < i; j++)
+                waiting_time[i] += burst_time[j];
+            total += waiting_time[i];
+        }
+        // Calculating Average waiting time
+        wait_avg = (float) total / n;
+        total = 0;
+        System.out.println("\nProcess\t Burst Time \tWaiting Time\tTurnaround Time");
+        for (i = 0; i < n; i++) {
+            tat[i] = burst_time[i] + waiting_time[i]; // Calculating Turnaround Time
+            total += tat[i];
+            System.out.println(
+                    "\n p" + process[i] + "\t\t" + burst_time[i] + "\t\t " + waiting_time[i] + "\t\t " + tat[i]);
+        }
+
+        // Calculation of Average Turnaround Time
+        tat_avg = (float) total / n;
+        System.out.println("\n\nAverage Waiting Time: " + wait_avg);
+        System.out.println("\nAverage Turnaround Time: " + tat_avg);
+    }
+}
+
+/* Output:- 
+
+Enter number of process: 3
+
+Enter Burst time:
+
+Process[1]: 24
+
+Process[2]: 3
+
+Process[3]: 3
+
+Process  Burst Time     Waiting Time    Turnaround Time
+
+ p2             3                0               3
+
+ p3             3                3               6
+
+ p1             24               6               30
+
+
+Average Waiting Time: 3.0
+
+Average Turnaround Time: 13.0
+
+*/
