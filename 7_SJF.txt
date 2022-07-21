@@ -17,6 +17,7 @@ public class a {
         
         System.out.print("Enter number of process: ");
         n = s.nextInt();
+        
         process = new int[n];
         burst_time = new int[n];
         waiting_time = new int[n];
