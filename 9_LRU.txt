@@ -6,122 +6,82 @@
  LRU Part 
  */ 
   
- import java.util.Scanner; 
-  
- class Frame { 
-     int pageNumber = -1; 
-     int lastAccessTime = -1; 
-  
-     void replaceFrame(int pageNumber, int lastAccessTime) { 
-         this.pageNumber = pageNumber; 
-         this.lastAccessTime = lastAccessTime; 
-     } 
-  
-     void refreshFrame(int lastAccessTime) { 
-         this.lastAccessTime = lastAccessTime; 
-     } 
- } 
-  
- class CacheLRU { 
-  
-     private static Frame[] cache; 
-     private static int nF; 
-  
-     public static void main(String[] args) { 
-         Scanner scanner = new Scanner(System.in); 
-         System.out.println("Enter number of page requests"); 
-         int nR = scanner.nextInt(); 
-  
-         int[] pageNumbers = new int[nR]; 
-         System.out.println("Enter page requests"); 
-         for (int i = 0; i < nR; ++i) { 
-             pageNumbers[i] = scanner.nextInt(); 
-         } 
-  
-         System.out.println("Enter number of frames"); 
-         nF = scanner.nextInt(); 
-  
-         cache = new Frame[nF]; 
-         for (int i = 0; i < nF; ++i) { 
-             cache[i] = new Frame(); 
-         } 
-  
-         int totalHits = 0, totalMisses = 0; 
-  
-         for (int i = 0; i < nR; ++i) { 
-             int index = findPageNumber(pageNumbers[i]); 
-             if (index != -1) { 
-                 totalHits += 1; 
-                 cache[index].refreshFrame(i); 
-             } else { 
-                 totalMisses += 1; 
-                 int temp = getLruFrameIndex(); 
-                 cache[temp].replaceFrame(pageNumbers[i], i); 
-             } 
-             printCache(); 
-         } 
-  
-         System.out.println("Total Hits " + totalHits); 
-         System.out.println("Total Misses " + totalMisses); 
-         float hitRatio = ((float) totalHits) / (totalHits + totalMisses); 
-         System.out.println("Hit Ratio " + hitRatio); 
-  
-     } 
-  
-     public static int findPageNumber(int pageNumber) { 
-         for (int i = 0; i < nF; ++i) { 
-             if (cache[i].pageNumber == pageNumber) { 
-                 return i; 
-             } 
-         } 
-         return -1; 
-     } 
-  
-     public static int getLruFrameIndex() { 
-         int min = cache[0].lastAccessTime; 
-         int index = 0; 
-  
-         for (int i = 1; i < nF; ++i) { 
-             if (cache[i].lastAccessTime < min) { 
-                 min = cache[i].lastAccessTime; 
-                 index = i; 
-             } 
-         } 
-         return index; 
-     } 
-  
-     public static void printCache() { 
-         System.out.print("Cache Content: "); 
-         for (int i = 0; i < nF; ++i) { 
-             System.out.print(cache[i].pageNumber + " "); 
-         } 
-         System.out.println(); 
-     } 
- } 
-  
- /* 
- Output: 
-  
- Enter number of page requests 
- 13 
- Enter page requests 
- 7 0 1 2 0 3 0 4 2 3 0 3 2 
- Enter number of frames 
- 4 
- Cache Content: 7 -1 -1 -1 
- Cache Content: 7 0 -1 -1 
- Cache Content: 7 0 1 -1 
- Cache Content: 7 0 1 2 
- Cache Content: 7 0 1 2 
- Cache Content: 3 0 1 2 
- Cache Content: 3 0 1 2 
- Cache Content: 3 0 4 2 
- Cache Content: 3 0 4 2 
- Cache Content: 3 0 4 2 
- Cache Content: 3 0 4 2 
- Cache Content: 3 0 4 2 
- Cache Content: 3 0 4 2 
- Total Hits 7 
- Total Misses 6 
- Hit Ratio 0.53846157 
- */ 
+ import java.util.Scanner;
+
+class LRU {
+    public static int sort(int c[]) {
+        int max = -1;
+        int temp = -1;
+        for (int k = 0; k < 3; k++) {
+            if (c[k] > max) {
+                max = c[k];
+                temp = k;
+            }
+        }
+        return temp;
+    }
+
+    public static void main(String args[]) {
+        int z, m = 0, hit = 0, faults = 0;
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter the size of the array:- ");
+        int n = sc.nextInt();
+        int a[] = new int[n];
+        int flag[] = new int[n];
+        System.out.println("Enter the elements:-");
+        for (int i = 0; i < n; i++) {
+            a[i] = sc.nextInt();
+            flag[i] = 0;
+        }
+        int b[] = new int[3];
+        int c[] = new int[3];
+        for (int i = 0; i < 3; i++) {
+            b[i] = -1;
+            c[i] = 0;
+        }
+        for (int i = 0; i < n; i++) {
+            z = a[i];
+            for (int j = 0; j < 3; j++) {
+                if (z == b[j]) {
+                    flag[i] = 1;
+                    hit = hit + 1;
+                    break;
+                }
+            }
+            if (flag[i] == 0 && b[2] == -1) {
+                for (int j = 0; j < 3; j++) {
+                    if (b[j] == -1) {
+                        b[j] = z;
+                        faults = faults + 1;
+                        flag[i] = 1;
+                        break;
+                    }
+                }
+            }
+            if (flag[i] == 0) {
+                m = sort(c);
+                b[m] = z;
+                faults = faults + 1;
+                flag[i] = 1;
+                for (int k = 0; k < 3; k++)
+                    c[k] = c[k] + 1;
+                c[m] = 0;
+            }
+        }
+        System.out.println("Number of hits:- " + hit);
+        System.out.println("Number of faults:- " + faults);
+        System.out.println("Hit ratio:- " + (hit * 100) / (hit + faults));
+    }
+}
+
+/* Output:-
+
+Enter the size of the array:- 
+10
+Enter the elements:-
+2 3 5 4 2 5 7 3 8 7
+Number of hits:- 2
+Number of faults:- 8
+Hit ratio:- 20
+
+*/
