@@ -10,71 +10,77 @@
 
 public class a {
     public static void main(String args[]) {
+        int n, i, qt, count = 0, temp, sq = 0, bt[], wt[], tat[], rem_bt[];
+        float awt = 0, atat = 0;
+        bt = new int[10];
+        wt = new int[10];
+        tat = new int[10];
+        rem_bt = new int[10];
         Scanner s = new Scanner(System.in);
-        int wtime[], btime[], rtime[], num, quantum;
-        wtime = new int[10];
-        btime = new int[10];
-        rtime = new int[10]; // rtime -> remaining time
-        System.out.print("Enter number of processes(MAX 10): ");
-        num = s.nextInt();
-        System.out.print("Enter burst time");
-        for (int i = 0; i < num; i++) {
-            System.out.print("\nP[" + (i + 1) + "]: ");
-            btime[i] = s.nextInt();
-            rtime[i] = btime[i];
-            wtime[i] = 0;
+        System.out.print("Enter the number of process (maximum 10) = ");
+        n = s.nextInt();
+        System.out.print("Enter the burst time of the process\n");
+        for (i = 0; i < n; i++) {
+            System.out.print("P" + i + " = ");
+            bt[i] = s.nextInt();
+            rem_bt[i] = bt[i];
         }
-        System.out.print("\n\nEnter quantum: ");
-        quantum = s.nextInt();
-        int rp = num; // rp -> remaining processes
-        int i = 0;
-        int time = 0; // time -> current time
-        System.out.print("0");
-        wtime[0] = 0;
-        while (rp != 0) {
-            if (rtime[i] > quantum) {
-                rtime[i] = rtime[i] - quantum;
-                System.out.println(" | P[" + (i + 1) + "] | ");
-                time += quantum;
-                System.out.print(time);
-            } else if (rtime[i] <= quantum && rtime[i] > 0) {
-                time += rtime[i];
-                rtime[i] = rtime[i] - rtime[i];
-                System.out.println(" | P[" + (i + 1) + "] | ");
-                rp--;
-                System.out.print(time);
+        System.out.print("Enter the quantum time: ");
+        qt = s.nextInt();
+        while (true) {
+            for (i = 0, count = 0; i < n; i++) {
+                temp = qt;
+                if (rem_bt[i] == 0) {
+                    count++;
+                    continue;
+                }
+                if (rem_bt[i] > qt)
+                    rem_bt[i] = rem_bt[i] - qt;
+                else if (rem_bt[i] >= 0) {
+                    temp = rem_bt[i];
+                    rem_bt[i] = 0;
+                }
+                sq = sq + temp;
+                tat[i] = sq;
             }
-            i++;
-            if (i == num) {
-                i = 0;
-            }
+            if (n == count)
+                break;
         }
-        s.close();
+        System.out.print("--------------------------------------------------------------------------------");
+        System.out.print("\nProcess\t      Burst Time\t       Turnaround Time\t          Waiting Time\n");
+        System.out.print("--------------------------------------------------------------------------------");
+        for (i = 0; i < n; i++) {
+            wt[i] = tat[i] - bt[i];
+            awt = awt + wt[i];
+            atat = atat + tat[i];
+            System.out.print("\n " + (i + 1) + "\t \t" + bt[i] + "\t\t\t " + tat[i] + "\t\t\t\t " + wt[i] + "\n");
+        }
+        awt = awt / n;
+        atat = atat / n;
+        System.out.println("\nAverage waiting Time = " + awt + "\n");
+        System.out.println("Average turnaround time = " + atat);
     }
 }
-  
- /* 
- Output: 
-  
-Enter number of processes(MAX 10): 3
-Enter burst time
-P[1]: 24
 
-P[2]: 3
+/* Ouptut:-
 
-P[3]: 3
+Enter the number of process (maximum 10) = 3
+Enter the burst time of the process
+P0 = 24
+P1 = 3
+P2 = 3
+Enter the quantum time: 4
+--------------------------------------------------------------------------------
+Process       Burst Time               Turnaround Time            Waiting Time
+--------------------------------------------------------------------------------
+ 1              24                       30                              6
 
+ 2              3                        7                               4
 
-Enter quantum: 4
-0 | P[1] | 
-4 | P[2] | 
-7 | P[3] | 
-10 | P[1] |
-14 | P[1] |
-18 | P[1] |
-22 | P[1] |
-26 | P[1] |
-30
+ 3              3                        10                              7
 
- Average Wait Time: 5.6666665, Average Turn Around Time: 15.666667 
- */ 
+Average waiting Time = 5.6666665
+
+Average turnaround time = 15.666667
+
+*/
